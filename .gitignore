@@ -1,2 +1,6 @@
 **__pycache__
 *.cvs
+.venv*
+.mypy*
+dist*
+*.egg-info
