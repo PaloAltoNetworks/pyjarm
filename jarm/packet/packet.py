@@ -13,7 +13,7 @@ from jarm.constants import (
     TLS_1_3,
     SUPPORT_1_2,
 )
-from jarm.alpns.alpns import ALPNS
+from jarm.alpns.alpns import ALPNS, Alpns, ALL
 from jarm.ciphers.ciphers import CIPHERS, CipherSet
 from jarm.exceptions.exceptions import PyJARMUnexpectedException
 from jarm.grease.grease import GREASE_VALUES
@@ -243,8 +243,11 @@ class Packet:
 
     def _app_layer_proto_negotiation(self, alpn: str, extension_order: str) -> bytes:
         """"""
+        alpns: List[bytes] = []
         ext = Packet.ALPN_BASE
-        alpns = ALPNS.get(alpn).values
+        alpn_set = ALPNS.get(alpn)
+        if alpn_set is not None and isinstance(alpn_set, Alpns):
+            alpns = alpn_set.values
         # Mung alpns
         alpns = self._reorder(pre_list=alpns, order=extension_order)
         all_alpns = b"".join(alpns)
