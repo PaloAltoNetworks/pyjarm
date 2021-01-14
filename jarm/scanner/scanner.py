@@ -14,7 +14,7 @@ class Scanner:
     ScanTarget = namedtuple("ScanTarget", "host port")
 
     @staticmethod
-    def scan(dest_host, dest_port):
+    def scan(dest_host, dest_port, timeout: int = 20):
         results = []
         for packet_tuple in Scanner._generate_packets(
             dest_host=dest_host, dest_port=dest_port
@@ -23,14 +23,14 @@ class Scanner:
                 target = Scanner.ScanTarget(dest_host, dest_port)
                 if ":" in target.host:
                     with socket.socket(socket.AF_INET6, socket.SOCK_STREAM) as s:
-                        s.settimeout(20)
+                        s.settimeout(timeout)
                         s.connect((target.host, target.port, 0, 0))
                         s.sendall(packet_tuple[1])
                         data = s.recv(1484)
                         results.append(Scanner._parse_server_hello(data, packet_tuple))
                 else:
                     with socket.socket(socket.AF_INET6, socket.SOCK_STREAM) as s:
-                        s.settimeout(20)
+                        s.settimeout(timeout)
                         s.connect((target.host, target.port))
                         s.sendall(packet_tuple[1])
                         data = s.recv(1484)
