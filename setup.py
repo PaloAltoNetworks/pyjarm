@@ -16,7 +16,7 @@ setup(
     description="pyJarm is a convenience library for the JARM fingerprinting tool.",
     author=__author__,
     long_description=readme,
-    long_descritpion_content_type="text/markdown",
+    long_description_content_type="text/markdown",
     license=__license__,
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
