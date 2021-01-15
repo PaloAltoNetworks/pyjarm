@@ -36,23 +36,19 @@ class Scanner:
             except PyJARMInvalidTarget:
                 logging.exception(f"Invalid Target {dest_host}:{dest_port}")
                 return TOTAL_FAILURE, dest_host, dest_port
-
-            s = socket.socket(target_family, socket.SOCK_STREAM)
             try:
-                s.settimeout(timeout)
-                s.connect((target.host, target.port))
-                s.sendall(packet_tuple[1])
-                data = s.recv(1484)
-                results.append(Scanner._parse_server_hello(data, packet_tuple))
-
+                with socket.socket(target_family, socket.SOCK_STREAM) as s:
+                    s.settimeout(timeout)
+                    s.connect((target.host, target.port))
+                    s.sendall(packet_tuple[1])
+                    data = s.recv(1484)
+                    results.append(Scanner._parse_server_hello(data, packet_tuple))
             except (TimeoutError, socket.timeout):
                 logging.exception(f"Timeout scanning {target}")
                 return TOTAL_FAILURE, target.host, target.port
             except Exception:
                 logging.exception(f"Unknown Exception scanning {target}")
                 return None, target.host, target.port
-            finally:
-                s.close()
         return Hasher.jarm(",".join(results)), target.host, target.port
 
     @staticmethod
