@@ -12,7 +12,7 @@ pip install pyjarm
 
 ### Command Line
 ```
-usage: jarm [-h] [-i INPUT] [-d] [-o OUTPUT] [scan]
+usage: jarm [-h] [-i INPUT] [-d] [-o OUTPUT] [-4] [-6] [scan]
 
 Enter an IP address/domain and port to scan or supply an input file.
 
@@ -24,12 +24,16 @@ optional arguments:
   -i INPUT, --input INPUT
                         Provide a list of IP addresses or domains to scan, one
                         domain or IP address per line. Ports can be specified
-                        with a colon (ex. 8.8.8.8:8443
+                        with a colon (ex. 8.8.8.8:8443)
   -d, --debug           [OPTIONAL] Debug mode: Displays additional debug
                         details
   -o OUTPUT, --output OUTPUT
                         [OPTIONAL] Provide a filename to output/append results
                         to a CSV file.
+  -4, --ipv4only        [OPTIONAL] Use only IPv4 connections (incompatible with
+                        --ipv6only).
+  -6, --ipv6only        [OPTIONAL] Use only IPv6 connections (incompatible with
+                        --ipv4only).
 ```
 
 **Example**

@@ -8,3 +8,7 @@ class PyJARMUnsupportValueException(PyJARMException):
 
 class PyJARMUnexpectedException(PyJARMException):
     pass
+
+
+class PyJARMInvalidTarget(PyJARMException):
+    pass
