@@ -1,5 +1,5 @@
-from os import urandom
-from random import choice
+import os
+import random
 from struct import pack
 from typing import Any, List, NamedTuple
 
@@ -64,8 +64,8 @@ class Packet:
             raise PyJARMUnexpectedException()
 
         # Add random values to hello
-        client_hello += urandom(32)
-        session_id = urandom(32)
+        client_hello += os.urandom(32)
+        session_id = os.urandom(32)
         session_id_length = pack(">B", len(session_id))
         client_hello += session_id_length
         client_hello += session_id
@@ -173,7 +173,7 @@ class Packet:
         Applies a grease value if necessary.
         """
         if grease == GREASE:
-            pre_list.insert(0, choice(GREASE_VALUES))
+            pre_list.insert(0, random.choice(GREASE_VALUES))
             return pre_list
         return pre_list
 
@@ -192,7 +192,7 @@ class Packet:
 
         # Add Grease
         if grease == GREASE:
-            all_extensions += choice(GREASE_VALUES)
+            all_extensions += random.choice(GREASE_VALUES)
             all_extensions += Packet.DOUBLE_PAD
 
         # Append Host Extension
@@ -264,12 +264,12 @@ class Packet:
         share_ext: bytes = b""
 
         if grease == GREASE:
-            share_ext += choice(GREASE_VALUES)
+            share_ext += random.choice(GREASE_VALUES)
             share_ext += Packet.KEY_SHARE_GREASE_PAD
 
         share_ext += Packet.KEY_SHARE_GROUP
         share_ext += Packet.KEY_SHARE_KEY_EXCHANGE_LENGTH
-        share_ext += urandom(32)
+        share_ext += os.urandom(32)
         second_length = len(share_ext)
         first_length = second_length + 2
         ext += pack(">H", first_length)
@@ -292,7 +292,7 @@ class Packet:
 
         # Add GREASE if necessary
         if grease == GREASE:
-            versions = choice(GREASE_VALUES)
+            versions = random.choice(GREASE_VALUES)
 
         versions += b"".join(tls)
 

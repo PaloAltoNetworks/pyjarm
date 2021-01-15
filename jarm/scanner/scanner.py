@@ -1,46 +1,58 @@
 from collections import namedtuple
-from ipaddress import ip_address, IPv4Address, IPv6Address
 import logging
 import socket
+from enum import IntEnum
 
 from jarm.constants import TOTAL_FAILURE, FAILED_PACKET, ERROR_INC_1, ERROR_INC_2
 from jarm.formats import V1
 from jarm.hashing.hashing import Hasher
 from jarm.packet.packet import Packet
+from jarm.validate.validate import Validate
+from jarm.exceptions.exceptions import PyJARMInvalidTarget
 
 
 class Scanner:
 
     ScanTarget = namedtuple("ScanTarget", "host port")
 
+    class AddressFamily(IntEnum):
+        AF_ANY = 0
+        AF_INET = 2
+        AF_INET6 = 10
+
     @staticmethod
-    def scan(dest_host, dest_port, timeout: int = 20):
+    def scan(
+        dest_host, dest_port, timeout: int = 20, address_family=AddressFamily.AF_ANY
+    ):
         results = []
         for packet_tuple in Scanner._generate_packets(
             dest_host=dest_host, dest_port=dest_port
         ):
             try:
-                target = Scanner.ScanTarget(dest_host, dest_port)
-                if ":" in target.host:
-                    with socket.socket(socket.AF_INET6, socket.SOCK_STREAM) as s:
-                        s.settimeout(timeout)
-                        s.connect((target.host, target.port, 0, 0))
-                        s.sendall(packet_tuple[1])
-                        data = s.recv(1484)
-                        results.append(Scanner._parse_server_hello(data, packet_tuple))
-                else:
-                    with socket.socket(socket.AF_INET6, socket.SOCK_STREAM) as s:
-                        s.settimeout(timeout)
-                        s.connect((target.host, target.port))
-                        s.sendall(packet_tuple[1])
-                        data = s.recv(1484)
-                        results.append(Scanner._parse_server_hello(data, packet_tuple))
-            except (TimeoutError, socket.timeout) as e:
+                target_family, _, _, _, target_addr = Validate.validate_target(
+                    dest_host, dest_port, address_family
+                )
+                target = Scanner.ScanTarget(target_addr[0], dest_port)
+            except PyJARMInvalidTarget:
+                logging.exception(f"Invalid Target {dest_host}:{dest_port}")
+                return TOTAL_FAILURE, dest_host, dest_port
+
+            s = socket.socket(target_family, socket.SOCK_STREAM)
+            try:
+                s.settimeout(timeout)
+                s.connect((target.host, target.port))
+                s.sendall(packet_tuple[1])
+                data = s.recv(1484)
+                results.append(Scanner._parse_server_hello(data, packet_tuple))
+
+            except (TimeoutError, socket.timeout):
                 logging.exception(f"Timeout scanning {target}")
                 return TOTAL_FAILURE, target.host, target.port
-            except Exception as e:
+            except Exception:
                 logging.exception(f"Unknown Exception scanning {target}")
                 return None, target.host, target.port
+            finally:
+                s.close()
         return Hasher.jarm(",".join(results)), target.host, target.port
 
     @staticmethod
@@ -73,7 +85,7 @@ class Scanner:
             else:
                 logging.debug(f"Format Packet Results: {src_packet[0]} {FAILED_PACKET}")
                 return FAILED_PACKET
-        except Exception as e:
+        except Exception:
             logging.debug(f"Format Packet Results: {src_packet[0]} {FAILED_PACKET}")
             return FAILED_PACKET
 
@@ -117,7 +129,7 @@ class Scanner:
                 else:
                     result += "-"
             return result
-        except IndexError as e:
+        except IndexError:
             return "|"
 
     @staticmethod
