@@ -1,5 +1,9 @@
 # pyJARM
 
+[![Latest version released on PyPi](https://img.shields.io/pypi/v/pyjarm.svg)](https://pypi.python.org/pypi/pyjarm)
+[![License](https://img.shields.io/pypi/l/pyjarm)](https://github.com/PaloAltoNetworks/pyjarm/blob/main/LICENSE)
+[![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 ## Overview
 pyJARM is a convenience library for the JARM fingerprinting tool. This library is based on the original python implementation [here](https://github.com/salesforce/jarm).
 
@@ -50,3 +54,9 @@ from jarm.scanner.scanner import Scanner
 print(Scanner.scan("google.com", 443))
 ('27d40d40d29d40d1dc42d43d00041d4689ee210389f4f6b4b5b1b93f92252d', 'google.com', 443)
 ```
+
+## Contributors
+
+- Andrew Scott - [andrew-paloalto](https://github.com/andrew-paloalto)
+- Francesco Vigo - [fvigo](https://github.com/fvigo)
+  

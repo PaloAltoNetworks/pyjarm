@@ -22,8 +22,32 @@ class Scanner:
 
     @staticmethod
     def scan(
-        dest_host, dest_port, timeout: int = 20, address_family=AddressFamily.AF_ANY
+        dest_host: str,
+        dest_port: int,
+        timeout: int = 20,
+        address_family=AddressFamily.AF_ANY,
     ):
+        """
+        Kicks off a number of TLS hello packets to a server then parses and hashes the response.
+
+        Args:
+            dest_host (str):
+                The target host. This can be an IPv4 address, IPv6 address, or domain name.
+            dest_port (int):
+                The target port.
+            timeout (int, optional):
+                How long to wait for the server to response. Default is 20 seconds.
+            address_family (int, optional):
+                The address family for the scan. This will default to ANY and is used to validate the target.
+        Returns:
+            :tuple:
+                Returns a tuple with three items. The first item is the JARM hash, which is a string. Second is
+                the target host, also a string. The final item is the target port which is an int.
+        Examples:
+            >>> from jarm.scanner.scanner import Scanner
+            >>> jarm, host, port = Scanner.scan("google.com", 443)
+
+        """
         results = []
         for packet_tuple in Scanner._generate_packets(
             dest_host=dest_host, dest_port=dest_port
@@ -52,7 +76,7 @@ class Scanner:
         return Hasher.jarm(",".join(results)), target.host, target.port
 
     @staticmethod
-    def _generate_packets(dest_host: str, dest_port: str):
+    def _generate_packets(dest_host: str, dest_port: int):
         return [
             (
                 f().__class__.__name__,
