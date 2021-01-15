@@ -22,7 +22,10 @@ class Scanner:
 
     @staticmethod
     def scan(
-        dest_host: str, dest_port: int, timeout: int = 20, address_family=AddressFamily.AF_ANY
+        dest_host: str,
+        dest_port: int,
+        timeout: int = 20,
+        address_family=AddressFamily.AF_ANY,
     ):
         """
         Kicks off a number of TLS hello packets to a server then parses and hashes the response.
