@@ -30,7 +30,7 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     keywords="expanse, palo alto, jarm",
-    packages=[*find_packages()],
+    packages=[*find_packages(exclude=["tests"])],
     install_requires=[],
     include_package_data=True,
     python_requires=">=3.6",
