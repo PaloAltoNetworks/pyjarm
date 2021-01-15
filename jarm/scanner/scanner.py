@@ -76,7 +76,7 @@ class Scanner:
         return Hasher.jarm(",".join(results)), target.host, target.port
 
     @staticmethod
-    def _generate_packets(dest_host: str, dest_port: str):
+    def _generate_packets(dest_host: str, dest_port: int):
         return [
             (
                 f().__class__.__name__,
