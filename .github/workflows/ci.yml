@@ -30,9 +30,9 @@ jobs:
     - name: Security Check with bandit
       run: |
         bandit ./jarm -r -n 3 -ll
-    # - name: Test with pytest
-    #   run: |
-    #     pytest
+    - name: Test with pytest
+      run: |
+        pytest
     - name: Type check with Mypy
       run: |
         mypy ./jarm

@@ -1,3 +1,6 @@
 black
 mypy
 bandit
+pytest
+pytest-mock
+mocket
