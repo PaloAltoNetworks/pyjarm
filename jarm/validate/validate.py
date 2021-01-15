@@ -7,11 +7,7 @@ class Validate:
     def validate_target(target_host, target_port=443, address_family=0):
         try:
             info = socket.getaddrinfo(
-                target_host,
-                target_port,
-                family=address_family,
-                type=socket.SOCK_STREAM,
-                proto=socket.IPPROTO_TCP,
+                host=target_host, port=target_port, family=address_family
             )
         except socket.gaierror:
             raise PyJARMInvalidTarget("Invalid Target Host")
