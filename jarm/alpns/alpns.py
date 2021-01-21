@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import Dict, List, NamedTuple
+from typing import List
 
 from jarm.constants import ALPN, RARE_ALPN
 

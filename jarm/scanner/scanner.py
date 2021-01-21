@@ -1,17 +1,13 @@
 from collections import namedtuple
 import logging
-import socket
-from enum import IntEnum
+import asyncio
+from typing import List, Any
 
 from jarm.constants import TOTAL_FAILURE, FAILED_PACKET, ERROR_INC_1, ERROR_INC_2
 from jarm.formats import V1
 from jarm.hashing.hashing import Hasher
 from jarm.packet.packet import Packet
-from jarm.validate.validate import Validate
 from jarm.connection.connection import Connection
-from jarm.proxy.proxy import Proxy
-from jarm.exceptions.exceptions import PyJARMInvalidTarget
-import asyncio
 
 
 class Scanner:
@@ -72,7 +68,7 @@ class Scanner:
             >>> jarm, host, port = Scanner.scan("google.com", 443)
 
         """
-        results = []
+        results: List[Any] = []
 
         target = Scanner.ScanTarget(dest_host, dest_port)
         connect_args = {
@@ -92,14 +88,13 @@ class Scanner:
         ]
         try:
             result_list = await Scanner.gather_with_concurrency(concurrency, *tasks)
-            results = []
             for p in packet_tuples:
                 for r in result_list:
                     if p[0] == r[0]:
                         results.append(Scanner._parse_server_hello(r[1], p))
         except Exception:
             logging.exception(f"Unknown Exception scanning {target}")
-            return None, target.host, target.port
+            return TOTAL_FAILURE, target.host, target.port
         return Hasher.jarm(",".join(results)), target.host, target.port
 
     @staticmethod
@@ -115,7 +110,7 @@ class Scanner:
     @staticmethod
     def _parse_server_hello(hello, src_packet):
         try:
-            if hello == None:
+            if hello is None:
                 logging.debug(f"Format Packet Results: {src_packet[0]} {FAILED_PACKET}")
                 return FAILED_PACKET
             if hello[0] == 21:

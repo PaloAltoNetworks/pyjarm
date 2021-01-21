@@ -1,5 +1,4 @@
 from collections import namedtuple
-from typing import Dict, NamedTuple
 
 from jarm.constants import SSL_V3, TLS_1, TLS_1_1, TLS_1_2, TLS_1_3
 

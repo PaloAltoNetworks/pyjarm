@@ -54,7 +54,7 @@ class Connection:
 
     @staticmethod
     async def jarm_connect(
-        target: Tuple[Any], connect_args: Dict[str, Any], data: bytes, check: str
+        target: Tuple[str, int], connect_args: Dict[str, Any], data: bytes, check: str
     ) -> Any:
         address_family = connect_args.get("address_family")
 

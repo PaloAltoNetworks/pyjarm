@@ -5,6 +5,9 @@
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ## Overview
+
+![pyjarm-full](https://user-images.githubusercontent.com/7642165/105419213-9f94f800-5c3e-11eb-80d2-df1a7fdab655.png)
+
 pyJARM is a convenience library for the JARM fingerprinting tool. This library is based on the original python implementation [here](https://github.com/salesforce/jarm).
 
 ## Installation

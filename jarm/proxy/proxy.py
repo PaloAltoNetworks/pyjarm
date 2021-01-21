@@ -1,16 +1,19 @@
 from urllib.request import getproxies
-from urllib.parse import urlparse, ParseResult
-import socket
+from urllib.parse import urlparse
 from base64 import b64encode
-from typing import Dict
-from jarm.exceptions.exceptions import PyJARMInvalidProxy, PyJARMProxyError
+from typing import Dict, Optional
+from jarm.exceptions.exceptions import PyJARMProxyError
 import asyncio
 
 
 class Proxy:
     @staticmethod
-    def parse_proxy(p: str = None):
-        proxy = ""
+    def get_http_headers() -> Dict[str, str]:
+        return {}
+
+    @staticmethod
+    def parse_proxy(p: Optional[str] = None):
+        proxy: Optional[str] = None
         if not p:
             proxy = getproxies().get("https")
         elif p != "ignore":
@@ -27,6 +30,7 @@ class Proxy:
         password: str = None,
         headers: Dict[str, str] = {},
     ):
+        headers = Proxy.get_http_headers()
         # Check if authorization is provided
         # auth has priority over username/password
         if auth:
@@ -53,10 +57,10 @@ class Proxy:
             or response[0] != "HTTP/1.1"
             or response[1] != "200"
         ):
-            raise PyJARMProxyError(f"Invalid Proxy Response: {status}")
-
-        # Ignore headers
-        while l := await reader.readline():
-            if not l or l == b"\r\n":
+            raise PyJARMProxyError(f"Invalid Proxy Response: {status!r}")
+        print(response)
+        # Ignore all headers
+        while line := await reader.readline():
+            if not line or line == b"\r\n":
                 break
         return
