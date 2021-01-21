@@ -1,7 +1,7 @@
 import os
 import random
 from struct import pack
-from typing import Any, List, NamedTuple
+from typing import Any, List
 
 from jarm.constants import (
     FORWARD,
@@ -13,7 +13,7 @@ from jarm.constants import (
     TLS_1_3,
     SUPPORT_1_2,
 )
-from jarm.alpns.alpns import ALPNS, Alpns, ALL
+from jarm.alpns.alpns import ALPNS, Alpns
 from jarm.ciphers.ciphers import CIPHERS, CipherSet
 from jarm.exceptions.exceptions import PyJARMUnexpectedException
 from jarm.grease.grease import GREASE_VALUES

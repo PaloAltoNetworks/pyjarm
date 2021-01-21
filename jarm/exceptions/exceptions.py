@@ -12,3 +12,11 @@ class PyJARMUnexpectedException(PyJARMException):
 
 class PyJARMInvalidTarget(PyJARMException):
     pass
+
+
+class PyJARMInvalidProxy(PyJARMException):
+    pass
+
+
+class PyJARMProxyError(PyJARMException):
+    pass

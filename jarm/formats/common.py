@@ -1,6 +1,3 @@
-from random import choice
-from typing import Set
-
 from jarm.constants import (
     ALLOWED_CIPHER_LISTS,
     ALLOWED_CIPHER_ORDER,
