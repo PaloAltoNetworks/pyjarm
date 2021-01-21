@@ -10,6 +10,8 @@
 
 pyJARM is a convenience library for the JARM fingerprinting tool. This library is based on the original python implementation [here](https://github.com/salesforce/jarm).
 
+It requires python 3.7+.
+
 ## Installation
 ```
 pip install pyjarm
