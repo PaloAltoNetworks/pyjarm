@@ -58,7 +58,6 @@ class Proxy:
             or response[1] != "200"
         ):
             raise PyJARMProxyError(f"Invalid Proxy Response: {status!r}")
-        print(response)
         # Ignore all headers
         while True:
             line = await reader.readline()
