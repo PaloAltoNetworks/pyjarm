@@ -6,7 +6,7 @@
 
 ## Overview
 
-![pyjarm-full](https://user-images.githubusercontent.com/7642165/105419213-9f94f800-5c3e-11eb-80d2-df1a7fdab655.png)
+![pyjarm-gh](https://user-images.githubusercontent.com/7642165/105513920-33b09f00-5cd3-11eb-8dc7-e0b3cc9bd569.png)
 
 pyJARM is a convenience library for the JARM fingerprinting tool. This library is based on the original python implementation [here](https://github.com/salesforce/jarm).
 
