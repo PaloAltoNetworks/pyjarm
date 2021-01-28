@@ -51,16 +51,17 @@ optional arguments:
 
 **Example**
 ```
-$ python jarm google.com
+$ pyjarm google.com
 Target: google.com:443
 JARM: 27d40d40d29d40d1dc42d43d00041d4689ee210389f4f6b4b5b1b93f92252d
 ```
 
 ### Scripted
 ```
+import asyncio
 from jarm.scanner.scanner import Scanner
 
-print(Scanner.scan("google.com", 443))
+print(asyncio.run(Scanner.scan("google.com", 443)))
 ('27d40d40d29d40d1dc42d43d00041d4689ee210389f4f6b4b5b1b93f92252d', 'google.com', 443)
 ```
 
