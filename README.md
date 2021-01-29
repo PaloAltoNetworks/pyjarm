@@ -21,7 +21,7 @@ pip install pyjarm
 
 ### Command Line
 ```
-usage: jarm [-h] [-i INPUT] [-d] [-o OUTPUT] [-4] [-6] [-c [CONCURRENCY]] [--proxy PROXY]
+usage: pyjarm [-h] [-i INPUT] [-d] [-o OUTPUT] [-4] [-6] [-c [CONCURRENCY]] [--proxy PROXY]
                    [--proxy-auth PROXY_AUTH] [--proxy-insecure]
                    [scan]
 
