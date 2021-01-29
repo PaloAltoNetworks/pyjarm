@@ -31,7 +31,7 @@ def _scan(
         port = 443
     print(f"Target: {host}:{port}")
     results = asyncio.run(
-        Scanner.scan(
+        Scanner.scan_async(
             dest_host=host,
             dest_port=port,
             address_family=address_family,

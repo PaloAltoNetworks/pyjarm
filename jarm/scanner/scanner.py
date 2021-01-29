@@ -25,7 +25,14 @@ class Scanner:
         return await asyncio.gather(*(sem_task(task) for task in tasks))
 
     @staticmethod
-    async def scan(
+    def scan(*args, **kwargs):
+        """
+        Sync version of scan that doesn't require to be called through asyncio.run()
+        """
+        return asyncio.run(Scanner.scan_async(*args, **kwargs))
+
+    @staticmethod
+    async def scan_async(
         dest_host: str,
         dest_port: int,
         timeout: int = 20,
