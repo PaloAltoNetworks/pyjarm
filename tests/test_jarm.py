@@ -27,7 +27,7 @@ def test_scanner_google_noproxy_ipv4_sync(mocker):
 
     Mocket.enable(TEST_NAME, "./tests/data")
 
-    jarm = Scanner.scan_sync(fqdn, port, address_family=family, concurrency=1)
+    jarm = Scanner.scan(fqdn, port, address_family=family, concurrency=1)
     assert jarm == (MOCK_JARM, fqdn, port)
 
 
@@ -51,7 +51,9 @@ def test_scanner_google_noproxy_ipv4(mocker):
 
     Mocket.enable(TEST_NAME, "./tests/data")
 
-    jarm = asyncio.run(Scanner.scan(fqdn, port, address_family=family, concurrency=1))
+    jarm = asyncio.run(
+        Scanner.scan_async(fqdn, port, address_family=family, concurrency=1)
+    )
     assert jarm == (MOCK_JARM, fqdn, port)
 
 
@@ -83,7 +85,9 @@ def test_scanner_google_httpproxy_param_ipv4(mocker):
     Mocket.enable(TEST_NAME, "./tests/data")
 
     jarm = asyncio.run(
-        Scanner.scan(fqdn, port, proxy=proxy, address_family=family, concurrency=1)
+        Scanner.scan_async(
+            fqdn, port, proxy=proxy, address_family=family, concurrency=1
+        )
     )
     assert jarm == (MOCK_JARM, fqdn, port)
 
@@ -115,7 +119,9 @@ def test_scanner_google_httpproxy_env_ipv4(mocker):
     mocker.patch.object(Proxy, "get_http_headers", side_effect=get_user_agent)
     Mocket.enable(TEST_NAME, "./tests/data")
 
-    jarm = asyncio.run(Scanner.scan(fqdn, port, address_family=family, concurrency=1))
+    jarm = asyncio.run(
+        Scanner.scan_async(fqdn, port, address_family=family, concurrency=1)
+    )
     assert jarm == (MOCK_JARM, fqdn, port)
 
 
@@ -148,6 +154,8 @@ def test_scanner_google_ignoreproxy_env_ipv4(mocker):
     Mocket.enable(TEST_NAME, "./tests/data")
 
     jarm = asyncio.run(
-        Scanner.scan(fqdn, port, proxy=proxy, address_family=family, concurrency=1)
+        Scanner.scan_async(
+            fqdn, port, proxy=proxy, address_family=family, concurrency=1
+        )
     )
     assert jarm == (MOCK_JARM, fqdn, port)
