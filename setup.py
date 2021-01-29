@@ -31,7 +31,9 @@ setup(
     ],
     keywords="expanse, palo alto, jarm",
     packages=[*find_packages(exclude=["tests"])],
+    package_dir={"pyjarm": "jarm"},
+    entry_points={"console_scripts": ["pyjarm=jarm.cli:run"]},
     install_requires=[],
     include_package_data=True,
-    python_requires=">=3.6",
+    python_requires=">=3.7",
 )
