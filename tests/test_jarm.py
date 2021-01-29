@@ -7,6 +7,30 @@ from jarm.scanner.scanner import Scanner
 from jarm.proxy.proxy import Proxy
 
 
+def test_scanner_google_noproxy_ipv4_sync(mocker):
+    fqdn = "google.com"
+    ip = "142.250.184.174"
+    port = 443
+    MOCK_JARM = "27d40d40d29d40d1dc42d43d00041d4689ee210389f4f6b4b5b1b93f92252d"
+    family = socket.AF_INET
+    TEST_NAME = "google_com_443_noproxy_ipv4"
+
+    mocker.patch(
+        "os.urandom",
+        return_value=b"\x17]\x18r\xb2\xe7\x14L\x82\x9anR\xe59{D\xb9\xf8\xb2P\x9cd\xb5\x03g3<\x99)\x176n",
+    )
+    mocker.patch("random.choice", return_value=b"\x5a\x5a")
+    mocker.patch(
+        "socket.getaddrinfo",
+        return_value=[(family, socket.SOCK_STREAM, socket.IPPROTO_TCP, "", (ip, port))],
+    )
+
+    Mocket.enable(TEST_NAME, "./tests/data")
+
+    jarm = Scanner.scan_sync(fqdn, port, address_family=family, concurrency=1)
+    assert jarm == (MOCK_JARM, fqdn, port)
+
+
 def test_scanner_google_noproxy_ipv4(mocker):
     fqdn = "google.com"
     ip = "142.250.184.174"
