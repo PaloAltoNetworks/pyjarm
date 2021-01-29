@@ -105,6 +105,9 @@ def run():
     )
     args = parser.parse_args()
     concurrency = args.concurrency if args.concurrency else 2
+    if args.debug:
+        import logging
+        logging.basicConfig(level=logging.DEBUG)
     if args.ipv4only and args.ipv6only:
         parser.error("Cannot specify both --ipv4only and --ipv6only at the same time")
     address_family = Connection.AddressFamily.AF_ANY  # either IPv4 or IPv6 allowed
