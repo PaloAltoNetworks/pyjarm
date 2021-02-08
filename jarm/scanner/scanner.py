@@ -2,6 +2,7 @@ from collections import namedtuple
 import logging
 import asyncio
 from typing import List, Any
+import warnings
 
 from jarm.constants import TOTAL_FAILURE, FAILED_PACKET, ERROR_INC_1, ERROR_INC_2
 from jarm.formats import V1
@@ -41,6 +42,7 @@ class Scanner:
         proxy_auth: str = None,
         proxy_insecure: bool = None,
         concurrency: int = 2,
+        suppress: bool = False,
     ):
         """
         Kicks off a number of TLS hello packets to a server then parses and hashes the response.
@@ -50,7 +52,7 @@ class Scanner:
                 The target host. This can be an IPv4 address, IPv6 address, or domain name.
             dest_port (int):
                 The target port.
-            timeout (int, optional):
+            timeout (int, optional, default=20):
                 How long to wait for the server to response. Default is 20 seconds.
             address_family (int, optional):
                 The address family for the scan. This will default to ANY and is used to validate the target.
@@ -64,8 +66,10 @@ class Scanner:
             proxy_insecure (bool, optional):
                 If you are connecting through an HTTPS proxy via TLS, this flag disables the verification of the proxy
                 certificate.
-            concurrency (int, optional, default=2)
+            concurrency (int, optional, default=2):
                 Number of concurrent TCP connections to generate.
+            suppress (bool, optional, default=False):
+                Suppresses any raised exceptions encountered during scanning
         Returns:
             :tuple:
                 Returns a tuple with three items. The first item is the JARM hash, which is a string. Second is
@@ -83,7 +87,11 @@ class Scanner:
             "proxy": proxy,
             "proxy_auth": proxy_auth,
             "verify": False if proxy_insecure else True,
+            "timeout": timeout,
         }
+
+        if suppress:
+            warnings.filterwarnings("ignore")
         packet_tuples = Scanner._generate_packets(
             dest_host=dest_host, dest_port=dest_port
         )
@@ -99,9 +107,16 @@ class Scanner:
                 for r in result_list:
                     if p[0] == r[0]:
                         results.append(Scanner._parse_server_hello(r[1], p))
+        except OSError:
+            if not suppress:
+                logging.exception(
+                    f"Socket Exception scanning {target} - is the address resolvable?"
+                )
+            return Hasher.jarm(TOTAL_FAILURE), target.host, target.port
         except Exception:
-            logging.exception(f"Unknown Exception scanning {target}")
-            return TOTAL_FAILURE, target.host, target.port
+            if not suppress:
+                logging.exception(f"Unknown Exception scanning {target}")
+            return Hasher.jarm(TOTAL_FAILURE), target.host, target.port
         return Hasher.jarm(",".join(results)), target.host, target.port
 
     @staticmethod

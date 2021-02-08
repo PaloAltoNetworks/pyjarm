@@ -1,8 +1,11 @@
 import argparse
-from datetime import datetime, timezone
 import asyncio
+from contextlib import suppress
+from datetime import datetime, timezone
+import logging
 
 try:
+    from jarm.constants import DEFAULT_TIMEOUT
     from jarm.scanner.scanner import Scanner
     from jarm.connection.connection import Connection
 except ImportError:
@@ -10,6 +13,7 @@ except ImportError:
     import sys
 
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from jarm.constants import DEFAULT_TIMEOUT
     from jarm.scanner.scanner import Scanner
     from jarm.connection.connection import Connection
 
@@ -21,6 +25,8 @@ def _scan(
     proxy_auth: str = None,
     proxy_insecure: bool = None,
     concurrency: int = 2,
+    timeout: int = DEFAULT_TIMEOUT,
+    suppress: bool = False,
 ):
     if ":" in target:
         parts = target.split(":")
@@ -34,11 +40,13 @@ def _scan(
         Scanner.scan_async(
             dest_host=host,
             dest_port=port,
+            timeout=timeout,
             address_family=address_family,
             proxy=proxy,
             proxy_auth=proxy_auth,
             proxy_insecure=proxy_insecure,
             concurrency=concurrency,
+            suppress=suppress,
         )
     )
     print(f"JARM: {results[0]}")
@@ -103,11 +111,19 @@ def run():
         help="[OPTIONAL] Do not verify SSL_CERTIFICATES (only when HTTPS proxy is set).",
         action="store_true",
     )
+    parser.add_argument(
+        "--timeout",
+        help="[OPTIONAL] Timeout to wait for connection attempts. Default is 20 seconds",
+        type=int,
+    )
+    parser.add_argument(
+        "--suppress",
+        help="[OPTIONAL] Suppresses any exception logging.",
+        action="store_true",
+    )
     args = parser.parse_args()
     concurrency = args.concurrency if args.concurrency else 2
     if args.debug:
-        import logging
-
         logging.basicConfig(level=logging.DEBUG)
     if args.ipv4only and args.ipv6only:
         parser.error("Cannot specify both --ipv4only and --ipv6only at the same time")
@@ -127,6 +143,8 @@ def run():
                 proxy_auth=args.proxy_auth,
                 proxy_insecure=args.proxy_insecure,
                 concurrency=concurrency,
+                timeout=args.timeout,
+                suppress=args.suppress,
             )
         ]
     else:
@@ -143,6 +161,8 @@ def run():
                     proxy_auth=args.proxy_auth,
                     proxy_insecure=args.proxy_insecure,
                     concurrency=concurrency,
+                    timeout=args.timeout,
+                    suppress=args.suppress,
                 )
             )
     if args.output is not None:

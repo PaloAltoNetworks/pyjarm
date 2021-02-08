@@ -62,3 +62,6 @@ TOTAL_FAILURE: str = "|||,|||,|||,|||,|||,|||,|||,|||,|||,|||"
 FAILED_PACKET: str = "|||"
 ERROR_INC_1: bytes = b"\x0e\xac\x0b"
 ERROR_INC_2: bytes = b"\x0f\xf0\x0b"
+
+# CONNECTION
+DEFAULT_TIMEOUT = 20
