@@ -107,12 +107,6 @@ class Scanner:
                 for r in result_list:
                     if p[0] == r[0]:
                         results.append(Scanner._parse_server_hello(r[1], p))
-        except OSError:
-            if not suppress:
-                logging.exception(
-                    f"Socket Exception scanning {target} - is the address resolvable?"
-                )
-            return Hasher.jarm(TOTAL_FAILURE), target.host, target.port
         except Exception:
             if not suppress:
                 logging.exception(f"Unknown Exception scanning {target}")
