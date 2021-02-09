@@ -4,15 +4,13 @@ from typing import Tuple, Dict, Any
 from enum import IntEnum
 import ssl
 
+from jarm.constants import DEFAULT_TIMEOUT
 from jarm.proxy.proxy import Proxy
 from jarm.exceptions.exceptions import PyJARMInvalidProxy
 from jarm.validate.validate import Validate
 
 
 class Connection:
-
-    DEFAULT_TIMEOUT = 20  # default timeout in seconds
-
     class AddressFamily(IntEnum):
         AF_ANY = 0
         AF_INET = 2
@@ -65,7 +63,7 @@ class Connection:
 
         timeout = connect_args.get("timeout")
         if not timeout or not isinstance(timeout, int):
-            timeout = Connection.DEFAULT_TIMEOUT
+            timeout = DEFAULT_TIMEOUT
 
         proxy_string = connect_args.get("proxy")
         if proxy_string and not isinstance(proxy_string, str):
