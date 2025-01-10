@@ -119,7 +119,7 @@ class Connection:
         conn_target["connect_port"] = connection_port
         conn_target["address_family"] = target_family
         fut = Connection.jarm_data(conn_target, data)
-        output = b''
+        output = b""
         try:
             output = await asyncio.wait_for(fut, timeout=timeout)
         except asyncio.TimeoutError as e:
