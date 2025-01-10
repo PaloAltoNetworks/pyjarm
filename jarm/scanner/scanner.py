@@ -1,7 +1,7 @@
 from collections import namedtuple
 import logging
 import asyncio
-from typing import List, Any
+from typing import Optional, List, Any
 import warnings
 
 from jarm.constants import TOTAL_FAILURE, FAILED_PACKET, ERROR_INC_1, ERROR_INC_2
@@ -38,9 +38,9 @@ class Scanner:
         dest_port: int,
         timeout: int = 20,
         address_family=Connection.AddressFamily.AF_ANY,
-        proxy: str = None,
-        proxy_auth: str = None,
-        proxy_insecure: bool = None,
+        proxy: Optional[str] = None,
+        proxy_auth: Optional[str] = None,
+        proxy_insecure: Optional[bool] = None,
         concurrency: int = 2,
         suppress: bool = False,
     ):
