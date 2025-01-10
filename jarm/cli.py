@@ -3,6 +3,7 @@ import asyncio
 from contextlib import suppress
 from datetime import datetime, timezone
 import logging
+from typing import Optional
 
 try:
     from jarm.constants import DEFAULT_TIMEOUT
@@ -21,9 +22,9 @@ except ImportError:
 def _scan(
     target: str,
     address_family: int = 0,
-    proxy: str = None,
-    proxy_auth: str = None,
-    proxy_insecure: bool = None,
+    proxy: Optional[str] = None,
+    proxy_auth: Optional[str] = None,
+    proxy_insecure: Optional[bool] = None,
     concurrency: int = 2,
     timeout: int = DEFAULT_TIMEOUT,
     suppress: bool = False,

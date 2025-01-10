@@ -25,9 +25,9 @@ class Proxy:
         reader: asyncio.StreamReader,
         writer: asyncio.StreamWriter,
         target_str: str,
-        auth: str = None,
-        username: str = None,
-        password: str = None,
+        auth: Optional[str] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
         headers: Dict[str, str] = {},
     ):
         headers = Proxy.get_http_headers()
