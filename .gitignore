@@ -82,3 +82,10 @@ docs/_diagrams
 
 # Mpyp
 *.mypy_cache
+
+report.xml
+
+venv
+
+.baserock
+
