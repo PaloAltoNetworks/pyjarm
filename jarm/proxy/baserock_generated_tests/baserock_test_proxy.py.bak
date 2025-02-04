@@ -1,0 +1,106 @@
+import pytest
+from unittest.mock import MagicMock, patch
+from urllib.request import getproxies
+from urllib.parse import urlparse
+from base64 import b64encode
+import asyncio
+
+from jarm.proxy.prox import Proxy
+from jarm.exceptions.exceptions import PyJARMProxyError
+
+@pytest.fixture
+def mock_reader():
+    return MagicMock(spec=asyncio.StreamReader)
+
+@pytest.fixture
+def mock_writer():
+    return MagicMock(spec=asyncio.StreamWriter)
+
+class TestProxy:
+    def test_get_http_headers(self):
+        headers = Proxy.get_http_headers()
+        assert isinstance(headers, dict)
+        assert len(headers) == 0
+
+    @pytest.mark.parametrize("proxy_input, expected_output", [
+        (None, None),
+        ("ignore", None),
+        ("http://example.com:8080", urlparse("http://example.com:8080")),
+    ])
+    def test_parse_proxy(self, proxy_input, expected_output):
+        with patch('jarm.proxy.prox.getproxies') as mock_getproxies:
+            mock_getproxies.return_value = {"https": "http://default.proxy:8080"}
+            result = Proxy.parse_proxy(proxy_input)
+            assert result == expected_output
+
+    @pytest.mark.asyncio
+    async def test_handle_proxy_success(self, mock_reader, mock_writer):
+        mock_reader.readline.side_effect = [
+            b"HTTP/1.1 200 Connection established\r\n",
+            b"\r\n"
+        ]
+        await Proxy.handle_proxy(mock_reader, mock_writer, "example.com:443")
+        mock_writer.write.assert_called_once()
+        mock_writer.drain.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_handle_proxy_with_username_password(self, mock_reader, mock_writer):
+        mock_reader.readline.side_effect = [
+            b"HTTP/1.1 200 Connection established\r\n",
+            b"\r\n"
+        ]
+        await Proxy.handle_proxy(mock_reader, mock_writer, "example.com:443", username="user", password="pass")
+        call_args = mock_writer.write.call_args[0][0]
+        assert b"Proxy-Authorization: Basic " in call_args
+
+    @pytest.mark.asyncio
+    async def test_handle_proxy_no_status(self, mock_reader, mock_writer):
+        mock_reader.readline.return_value = b""
+        with pytest.raises(PyJARMProxyError, match="No status line received from Proxy"):
+            await Proxy.handle_proxy(mock_reader, mock_writer, "example.com:443")
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("status_line, error_message", [
+        (b"HTTP/1.0 200 OK\r\n", "Invalid Proxy Response: b'HTTP/1.0 200 OK\\r\\n'"),
+        (b"HTTP/1.1 403 Forbidden\r\n", "Invalid Proxy Response: b'HTTP/1.1 403 Forbidden\\r\\n'"),
+        (b"Invalid Response\r\n", "Invalid Proxy Response: b'Invalid Response\\r\\n'"),
+    ])
+    async def test_handle_proxy_invalid_response(self, mock_reader, mock_writer, status_line, error_message):
+        mock_reader.readline.side_effect = [status_line, b"\r\n"]
+        with pytest.raises(PyJARMProxyError, match=error_message):
+            await Proxy.handle_proxy(mock_reader, mock_writer, "example.com:443")
+
+    @pytest.mark.asyncio
+    async def test_handle_proxy_custom_headers(self, mock_reader, mock_writer):
+        mock_reader.readline.side_effect = [
+            b"HTTP/1.1 200 Connection established\r\n",
+            b"\r\n"
+        ]
+        custom_headers = {"User-Agent": "CustomAgent", "X-Custom-Header": "Value"}
+        with patch.object(Proxy, 'get_http_headers', return_value=custom_headers):
+            await Proxy.handle_proxy(mock_reader, mock_writer, "example.com:443")
+        call_args = mock_writer.write.call_args[0][0].decode()
+        assert "User-Agent: CustomAgent" in call_args
+        assert "X-Custom-Header: Value" in call_args
+
+    @pytest.mark.asyncio
+    async def test_handle_proxy_with_auth(self, mock_reader, mock_writer):
+        mock_reader.readline.side_effect = [
+            b"HTTP/1.1 200 Connection established\r\n",
+            b"\r\n"
+        ]
+        auth = "Bearer token123"
+        await Proxy.handle_proxy(mock_reader, mock_writer, "example.com:443", auth=auth)
+        call_args = mock_writer.write.call_args[0][0].decode()
+        assert f"Proxy-Authorization: {auth}" in call_args
+
+    @pytest.mark.asyncio
+    async def test_handle_proxy_multiple_header_lines(self, mock_reader, mock_writer):
+        mock_reader.readline.side_effect = [
+            b"HTTP/1.1 200 Connection established\r\n",
+            b"Header1: Value1\r\n",
+            b"Header2: Value2\r\n",
+            b"\r\n"
+        ]
+        await Proxy.handle_proxy(mock_reader, mock_writer, "example.com:443")
+        assert mock_reader.readline.call_count == 4

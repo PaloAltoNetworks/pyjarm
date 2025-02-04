@@ -4,7 +4,6 @@ from typing import List
 
 from jarm.constants import TOTAL_FAILURE
 
-
 class Hasher:
 
     CIPHER_LIST: List[bytes] = [

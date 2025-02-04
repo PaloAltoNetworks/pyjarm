@@ -1,0 +1,8 @@
+{
+    "python.analysis.extraPaths": [
+        "/Users/guptatilak/Sapient/vscode/projects/palo_alto/tmp/pyjarm/.baserock/venv/bin/lib/python18/site-packages"
+    ],
+    "python.autoComplete.extraPaths": [
+        "/Users/guptatilak/Sapient/vscode/projects/palo_alto/tmp/pyjarm/.baserock/venv/bin/lib/python18/site-packages"
+    ]
+}

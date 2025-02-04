@@ -82,3 +82,5 @@ docs/_diagrams
 
 # Mpyp
 *.mypy_cache
+
+.baserock/
