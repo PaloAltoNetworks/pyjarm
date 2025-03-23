@@ -18,7 +18,7 @@ class Connection:
 
     @staticmethod
     async def prep_connection(
-        connect_target: Dict[str, Any]
+        connect_target: Dict[str, Any],
     ) -> Tuple[asyncio.StreamReader, asyncio.StreamWriter]:
         reader, writer = await asyncio.open_connection(
             host=connect_target.get("connect_host"),
